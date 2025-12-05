@@ -37,7 +37,7 @@ mob = constants.MOBILE
 updatePDF = False
 
 # If Headless = True, script runs Chrome in headless mode without visible GUI
-headless = False
+headless = True
 
 # ----- No other changes required -----
 
@@ -228,6 +228,9 @@ def LoadNaukri(headless):
     options.add_argument("--start-maximized")  # ("--kiosk") for MAC
     options.add_argument("--disable-popups")
     options.add_argument("--disable-gpu")
+    options.add_argument("--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
     if headless:
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("headless")
