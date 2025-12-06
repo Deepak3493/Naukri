@@ -468,6 +468,15 @@ def UploadResume(driver, resumePath):
 
 
 def main():
+    last_run_file = os.path.join(os.path.dirname(__file__), 'last_run.txt')
+    current_time = time.time()
+    if os.path.exists(last_run_file):
+        with open(last_run_file, 'r') as f:
+            last_run = float(f.read().strip())
+        if current_time - last_run < 3600:
+            log_msg("Less than 1 hour since last run, skipping")
+            return
+
     log_msg("-----Naukri.py Script Run Begin-----")
     driver = None
     try:
@@ -496,6 +505,10 @@ def main():
         tearDown(driver)
 
     log_msg("-----Naukri.py Script Run Ended-----\n")
+
+    # Update last run time
+    with open(last_run_file, 'w') as f:
+        f.write(str(current_time))
 
 
 if __name__ == "__main__":
