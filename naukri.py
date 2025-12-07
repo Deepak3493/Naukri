@@ -473,8 +473,8 @@ def main():
     if os.path.exists(last_run_file):
         with open(last_run_file, 'r') as f:
             last_run = float(f.read().strip())
-        if current_time - last_run < 3600:
-            log_msg("Less than 1 hour since last run, skipping")
+        if current_time - last_run < 600:
+            log_msg("Less than 10 minutes since last run, skipping")
             return
 
     log_msg("-----Naukri.py Script Run Begin-----")
