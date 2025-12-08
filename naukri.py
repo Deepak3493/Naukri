@@ -23,15 +23,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.service import Service as ChromeService
 import constants
 
-# Add folder Path of your resume
-originalResumePath = constants.ORIGINAL_RESUME_PATH
-# Add Path where modified resume should be saved
-modifiedResumePath = constants.MODIFIED_RESUME_PATH
+# Resume paths are now set per user in the loop
 
 # Update your naukri username and password here before running
-username = constants.USERNAME
-password = constants.PASSWORD
-mob = constants.MOBILE
+# Now using user dict from constants.USERS
 
 # False if you dont want to add Random HIDDEN chars to your resume
 updatePDF = False
@@ -249,7 +244,7 @@ def LoadNaukri(headless):
     return driver
 
 
-def naukriLogin(headless=False):
+def naukriLogin(user, headless=False):
     """Open Chrome browser and Login to Naukri.com"""
     status = False
     driver = None
@@ -278,10 +273,10 @@ def naukriLogin(headless=False):
 
         if emailFieldElement is not None:
             emailFieldElement.clear()
-            emailFieldElement.send_keys(username)
+            emailFieldElement.send_keys(user['username'])
             time.sleep(1)
             passFieldElement.clear()
-            passFieldElement.send_keys(password)
+            passFieldElement.send_keys(user['password'])
             time.sleep(1)
             loginButton.send_keys(Keys.ENTER)
             time.sleep(3)
@@ -312,7 +307,7 @@ def naukriLogin(headless=False):
     return (status, driver)
 
 
-def UpdateProfile(driver):
+def UpdateProfile(driver, user):
     try:
         mobXpath = "//*[@name='mobile'] | //*[@id='mob_number']"
         saveXpath = "//button[@ type='submit'][@value='Save Changes'] | //*[@id='saveBasicDetailsBtn']"
@@ -339,7 +334,7 @@ def UpdateProfile(driver):
             mobFieldElement = GetElement(driver, mobXpath, locator="XPATH")
             if mobFieldElement:
                 mobFieldElement.clear()
-                mobFieldElement.send_keys(mob)
+                mobFieldElement.send_keys(user['mobile'])
                 driver.implicitly_wait(2)
                 
             saveFieldElement = GetElement(driver, saveXpath, locator="XPATH")
@@ -356,7 +351,7 @@ def UpdateProfile(driver):
             mobFieldElement = GetElement(driver, mobXpath, locator="XPATH")
             if mobFieldElement:
                 mobFieldElement.clear()
-                mobFieldElement.send_keys(mob)
+                mobFieldElement.send_keys(user['mobile'])
                 driver.implicitly_wait(2)
     
             saveFieldElement = GetElement(driver, saveXpath, locator="XPATH")
@@ -433,11 +428,13 @@ def UploadResume(driver, resumePath):
 
         if WaitTillElementPresent(driver, lazyattachCVID, locator="ID", timeout=5):
             AttachElement = GetElement(driver, uploadCV_btn, locator="XPATH")
-            AttachElement.send_keys(os.path.abspath(resumePath))
+            if AttachElement:
+                AttachElement.send_keys(os.path.abspath(resumePath))
 
         if WaitTillElementPresent(driver, attachCVID, locator="ID", timeout=5):
             AttachElement = GetElement(driver, attachCVID, locator="ID")
-            AttachElement.send_keys(os.path.abspath(resumePath))
+            if AttachElement:
+                AttachElement.send_keys(os.path.abspath(resumePath))
 
         if WaitTillElementPresent(driver, saveXpath, locator="ID", timeout=5):
             saveElement = GetElement(driver, saveXpath, locator="XPATH")
@@ -473,36 +470,42 @@ def main():
     if os.path.exists(last_run_file):
         with open(last_run_file, 'r') as f:
             last_run = float(f.read().strip())
-        if current_time - last_run < 600:
-            log_msg("Less than 10 minutes since last run, skipping")
+        if current_time - last_run < 9000:
+            log_msg("Less than 2.5 hours since last run, skipping")
             return
 
     log_msg("-----Naukri.py Script Run Begin-----")
-    driver = None
-    try:
-        status, driver = naukriLogin(headless)
-        if status:
-            UpdateProfile(driver)
-            if os.path.exists(originalResumePath):
-                if updatePDF:
-                    resumePath = UpdateResume()
-                    UploadResume(driver, resumePath)
+
+    for user in constants.USERS:
+        log_msg(f"Processing user: {user['username']}")
+        global originalResumePath, modifiedResumePath
+        originalResumePath = user['resume_path']
+        modifiedResumePath = user['resume_path']
+        driver = None
+        try:
+            status, driver = naukriLogin(user, headless)
+            if status:
+                UpdateProfile(driver, user)
+                if os.path.exists(originalResumePath):
+                    if updatePDF:
+                        resumePath = UpdateResume()
+                        UploadResume(driver, resumePath)
+                    else:
+                        UploadResume(driver, originalResumePath)
                 else:
-                    UploadResume(driver, originalResumePath)
-            else:
-                log_msg("Resume not found at %s " % originalResumePath)
+                    log_msg("Resume not found at %s " % originalResumePath)
 
-    except Exception as e:
-        catch(e)
+        except Exception as e:
+            catch(e)
 
-    finally:
-        if driver is not None:
-            try:
-                Logout(driver)
-                time.sleep(2)
-            except Exception as e:
-                log_msg("Error during logout: %s" % e)
-        tearDown(driver)
+        finally:
+            if driver is not None:
+                try:
+                    Logout(driver)
+                    time.sleep(2)
+                except Exception as e:
+                    log_msg("Error during logout: %s" % e)
+                tearDown(driver)
 
     log_msg("-----Naukri.py Script Run Ended-----\n")
 
