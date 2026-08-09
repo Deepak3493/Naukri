@@ -5,19 +5,19 @@ USERS = [
         "username": "deepakojha3493@gmail.com",
         "password": "123Delhi#",
         "mobile": "9193085200",
-        "resume_path": "/Users/deepak.ojha/Downloads/Experienced_2025_Deepak_ojha_resume.pdf"
+        "resume_path": "/Users/deepak.ojha/Downloads/Deepak_Ojha_Experienced_Resume_2026.pdf"
     },
     {
-        "username": "aanchalaanchal300@gmail.com",
+        "username": "deepakojhaedu07@gmail.com",
         "password": "123Delhi#",
-        "mobile": "9740512462",
-        "resume_path": "/Users/deepak.ojha/Downloads/resume.pdf"
+        "mobile": "9108053493",
+        "resume_path": ""
     },
     {
         "username": "9740512462",
         "password": "123Delhi#",
         "mobile": "9740512462",
-        "resume_path": "/Users/deepak.ojha/Downloads/resume.pdf"
+        "resume_path": "/Users/deepak.ojha/Downloads/Experienced_Deepak_ojha_resume_Updated_E.pdf"
     }
 ]
 
