@@ -12,12 +12,6 @@ USERS = [
         "password": "123Delhi#",
         "mobile": "9108053493",
         "resume_path": ""
-    },
-    {
-        "username": "9740512462",
-        "password": "123Delhi#",
-        "mobile": "9740512462",
-        "resume_path": "/Users/deepak.ojha/Downloads/Experienced_Deepak_ojha_resume_Updated_E.pdf"
     }
 ]
 
