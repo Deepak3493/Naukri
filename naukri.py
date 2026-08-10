@@ -329,8 +329,9 @@ def UpdateProfile(driver, user):
         if is_element_present(driver, By.XPATH, edit_locator):
             editElement = GetElement(driver, edit_locator, locator="XPATH")
             editElement.click()
+            time.sleep(3)
 
-            WaitTillElementPresent(driver, mobXpath, "XPATH", 10)
+            WaitTillElementPresent(driver, mobXpath, "XPATH", 20)
             mobFieldElement = GetElement(driver, mobXpath, locator="XPATH")
             if mobFieldElement:
                 mobFieldElement.clear()
